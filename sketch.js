@@ -176,6 +176,8 @@ function setup() {
   verslagen = 0;
   beweegSnelheid = 7;
 
+  gestart = 0;
+
   glitchArray = [];
 
   bal = new Bal(500, 200, random(-1, 1), random(-1, 1));
@@ -197,6 +199,21 @@ function draw() {
   scale(schaal);
 
   background("black");
+
+  if (gestart == 0) {
+    fill("white");
+    textSize(100);
+    text("PING PONG", 250, 170);
+    textSize(40);
+    text("Druk op ENTER om te starten", 250, 260);
+
+    if (keyIsDown(ENTER)) {
+      gestart = 1;
+    }
+
+    pop();
+    return;
+  }
 
   fill("white");
   racket1.toon();
@@ -288,6 +305,7 @@ function eindScherm() {
     verloren = 0;
     teller = 1;
     level = 1;
+    gestart = 0;
 
     bal.snelheid_x = 5;
     bal.snelheid_y = 4.5;
