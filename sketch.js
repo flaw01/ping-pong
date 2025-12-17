@@ -61,36 +61,30 @@ class Bal {
     this.y += y;
     this.x += x;
 
-    // lading wordt willekeurig bepaald, als lading < 0 dan gaat de bal naar links ipv rechts
     if (this.lading_x < 0) {
       this.snelheid_x *= -1;
       this.lading_x = null;
     }
 
-    // lading wordt willekeurig bepaald, als lading < 0 dan gaat de bal naar onder ipv boven
     if (this.lading_y < 0) {
       this.snelheid_y *= -1;
       this.lading_y = null;
     }
 
-    // als de bal van het scherm af gaat
     if (this.x <= this.straal || this.x >= BASIS_W - this.straal) {
       verloren = 1;
       failsound.play();
     }
 
-    // als de bal de bovenkant of onderkant van het scherm raakt
     if (this.y <= this.straal || this.y >= BASIS_H - this.straal) {
       this.snelheid_y *= -1;
       this.snelheid_x *= 1;
 
-      // willekeurig 1 van de 2 tung sound effects spelen
       var tung = [tung1, tung2];
       var keuze = random(tung);
       keuze.play();
     }
 
-    // als de bal een racket raakt
     if (
       this.x + this.straal >= racket2.x &&
       this.x - this.straal <= racket2.x + racket2.width &&
@@ -101,7 +95,6 @@ class Bal {
       this.x = racket2.x - this.straal;
       this.snelheid_x *= random(-1.01, -1.05);
 
-      // y snelheid na een botsing een klein beetje afhankelijk maken van waar op de racket het de racket raakt
       var midden2 = racket2.y + racket2.height / 2;
       var afstandVanafMidden2 = this.y - midden2;
       var verhouding2 = afstandVanafMidden2 / (racket2.height / 2);
@@ -114,7 +107,6 @@ class Bal {
       ping_pong_pang.play();
     }
 
-    // hetzelfde als hiervoor maar dan andere racket
     if (
       this.x - this.straal <= racket1.x + racket1.width &&
       this.x + this.straal >= racket1.x &&
@@ -146,7 +138,6 @@ class Glitch {
     this.width = w;
     this.height = h;
 
-    // willekeurige tint groen
     this.r = random(0, 50);
     this.g = random(160, 255);
     this.b = random(0, 50);
@@ -205,7 +196,7 @@ function draw() {
     textSize(100);
     text("PING PONG", 250, 170);
     textSize(40);
-    text("Druk op ENTER om te starten", 250, 260);
+    text("Press ENTER to start", 250, 260);
 
     if (keyIsDown(ENTER)) {
       gestart = 1;
@@ -294,11 +285,11 @@ function eindScherm() {
   background("white");
   fill("black");
   textSize(140);
-  text("VERLOREN!", 75, 150);
+  text("GAME OVER", 75, 150);
   textSize(50);
   text("Level: " + level + "  Score: " + score, 75, 250);
   textSize(40);
-  text("Druk op ENTER om opnieuw te proberen", 75, 350);
+  text("Press ENTER to retry", 75, 350);
 
   if (keyIsDown(ENTER)) {
     score = 0;
@@ -318,11 +309,11 @@ function winScherm() {
   background("green");
   fill("white");
   textSize(100);
-  text("Level " + level + " gehaald!", 75, 150);
+  text("Level " + level + " cleared!", 75, 150);
 
   fill("white");
   textSize(40);
-  text("Druk op ENTER om naar level " + (level + 1) + " te gaan", 75, 325);
+  text("Press ENTER to continue", 75, 325);
 
   if (keyIsDown(ENTER)) {
     score = 0;
@@ -341,11 +332,11 @@ function spelVerslagen() {
   background("green");
   fill("white");
   textSize(50);
-  text("Je hebt het spel verslagen!", 75, 150);
+  text("You beat the game!", 75, 150);
 
   fill("white");
   textSize(40);
-  text("Druk op ENTER om de bonus levels te spelen", 75, 325);
+  text("Press ENTER to play bonus levels", 75, 325);
 
   if (keyIsDown(ENTER)) {
     score = 0;
