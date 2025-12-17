@@ -1,3 +1,6 @@
+const BASIS_W = 1000;
+const BASIS_H = 400;
+
 // sound effects laden
 function preload() {
   ping_pong_pang = loadSound("ping pong pang ping.mp3");
@@ -33,7 +36,7 @@ class Racket {
       this.vy = 5;
     }
 
-    this.y = constrain(this.y, 0, canvas.height - this.height);
+    this.y = constrain(this.y, 0, BASIS_H - this.height);
   }
 }
 
@@ -71,13 +74,13 @@ class Bal {
     }
 
     // als de bal van het scherm af gaat
-    if (this.x <= this.straal || this.x >= canvas.width - this.straal) {
+    if (this.x <= this.straal || this.x >= BASIS_W - this.straal) {
       verloren = 1;
       failsound.play();
     }
 
     // als de bal de bovenkant of onderkant van het scherm raakt
-    if (this.y <= this.straal || this.y >= canvas.height - this.straal) {
+    if (this.y <= this.straal || this.y >= BASIS_H - this.straal) {
       this.snelheid_y *= -1;
       this.snelheid_x *= 1;
 
@@ -104,7 +107,7 @@ class Bal {
       var verhouding2 = afstandVanafMidden2 / (racket2.height / 2);
 
       this.snelheid_y += verhouding2 * 0.5;
-      this.snelheid_y += random(-1, 1); // beetje randomness om te voorkomen dat de bal steeds in herhaling de rackets tikt                                            zonder dat je iets hoeft te doen
+      this.snelheid_y += random(-1, 1);
       this.snelheid_y += racket2.vy * 0.6;
 
       score++;
@@ -156,7 +159,7 @@ class Glitch {
 }
 
 function setup() {
-  canvas = createCanvas(1000, 400);
+  canvas = createCanvas(windowWidth, windowHeight);
   textFont("Verdana");
   textSize(40);
   noStroke();
@@ -175,11 +178,26 @@ function setup() {
 
   glitchArray = [];
 
-  bal = new Bal(500, 200, random(-1, 1), random(-1, 1)); // bal spawned altijd in het midden met willekeurige lading
+  bal = new Bal(500, 200, random(-1, 1), random(-1, 1));
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
   background("black");
+
+  let schaal = min(width / BASIS_W, height / BASIS_H);
+  let offsetX = (width - BASIS_W * schaal) / 2;
+  let offsetY = (height - BASIS_H * schaal) / 2;
+
+  push();
+  translate(offsetX, offsetY);
+  scale(schaal);
+
+  background("black");
+
   fill("white");
   racket1.toon();
   racket2.toon();
@@ -193,7 +211,6 @@ function draw() {
   bal.toon();
   bal.beweeg(bal.snelheid_x, bal.snelheid_y);
 
-  // rackets gaan steeds slomer bewegen tot level 3, daarna zelfde snelheid
   if (level < 4) {
     beweegSnelheid = 10 - level;
   } else {
@@ -204,11 +221,8 @@ function draw() {
     teller += 1;
     glitchArray.push(
       new Glitch(
-        // willekeurige locatie
-        random(10, 950),
-        random(10, 350),
-
-        // steeds grotere glitches elk level
+        random(10, BASIS_W - 50),
+        random(10, BASIS_H - 50),
         random(10 * level, 30 * level),
         random(10 * level, 30 * level)
       )
@@ -219,7 +233,6 @@ function draw() {
     glitchArray[b].toon();
   }
 
-  // als level behaald is (10 score + 2 per level), win het level of versla het spel als het level 5 is
   if (score == 10 + level * 2) {
     if (level != 5) {
       score = 0;
@@ -232,7 +245,6 @@ function draw() {
     }
   }
 
-  // bal en rackets terug op zijn plaats zetten en zorgen dat ze niet kunnen bewegen tijdens een ander scherm
   if (gewonnen == 1) {
     winScherm();
     bal.x = 500;
@@ -256,6 +268,8 @@ function draw() {
     racket1.y = 125;
     racket2.y = 125;
   }
+
+  pop();
 }
 
 function eindScherm() {
@@ -269,7 +283,6 @@ function eindScherm() {
   textSize(40);
   text("Druk op ENTER om opnieuw te proberen", 75, 350);
 
-  // reset spel
   if (keyIsDown(ENTER)) {
     score = 0;
     verloren = 0;
@@ -284,7 +297,6 @@ function eindScherm() {
 
 function winScherm() {
   glitchArray = [];
-
   background("green");
   fill("white");
   textSize(100);
@@ -294,7 +306,6 @@ function winScherm() {
   textSize(40);
   text("Druk op ENTER om naar level " + (level + 1) + " te gaan", 75, 325);
 
-  // volgend level
   if (keyIsDown(ENTER)) {
     score = 0;
     gewonnen = 0;
@@ -309,7 +320,6 @@ function winScherm() {
 
 function spelVerslagen() {
   glitchArray = [];
-
   background("green");
   fill("white");
   textSize(50);
@@ -319,7 +329,6 @@ function spelVerslagen() {
   textSize(40);
   text("Druk op ENTER om de bonus levels te spelen", 75, 325);
 
-  // volgend level
   if (keyIsDown(ENTER)) {
     score = 0;
     verslagen = 0;
